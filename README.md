@@ -1,6 +1,6 @@
 # Jydict
 
-an nodejs implementation of [ydict](https://github.com/freehaha/ydict)
+a nodejs implementation of [ydict](https://github.com/freehaha/ydict)
 
 # Installation
 rely on [LiveScript](http://livescript.net/)
