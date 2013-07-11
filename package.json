@@ -1,0 +1,15 @@
+{
+    "author": "Jeff Chien <jeffchien13@gmail.com>",
+    "name": "jydict",
+    "description": "ydict nodejs implementation",
+    "version": "0.0.1",
+    "engine": "node",
+    "preferGlobal": "true",
+    "bin": {
+        "jydict": "./jydict.ls"
+    },
+    "dependencies": {
+        "cheerio": "",
+        "cli-color": ""
+    }
+}
