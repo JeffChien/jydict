@@ -1,8 +1,11 @@
 #!/usr/bin/env lsc
-cheerio = require('cheerio')
-http = require('http')
-util = require('util')
-clc = require('cli-color')
+require! {
+    cheerio
+    http
+    util
+    clc: 'cli-color'
+}
+
 
 url_template = 'http://tw.dictionary.yahoo.com/dictionary?p=%s'
 
@@ -12,27 +15,24 @@ parser = (html) ->
     word = $('a', '.summary').first().text()
     pronunkk = $('dd', '.pronun').first().text()
     pronundj = $('dd', '.pronun').last().text()
-    explanation = $('p[class=explanation]').eq(0).text()
+    explanation = $('p[class=explanation]').first().text()
     out.push(clc.red.bold(word))
     out.push(util.format('KK:%s DJ%s', pronunkk, pronundj))
     out.push(clc.green(explanation))
 
-    sample = (i, elem) ->
-        $(elem).text()
+    do
+        (i, elem) <-! $('li[class=type-item]', '.explanations').each
+        text = $('.exp',,elem).text()
+        out.push(util.format('\t%s', text))
 
-    expitem = (i, elem) ->
+        (i, elem) <-! $('.exp-item',,elem).each
         text = $('.exp',,elem).text()
         out.push(util.format('\t%s', text))
         if $('.sample ',, elem).children().length > 0
-            text = $('.sample ',, elem).children().map(sample).join(' ')
+            text = $('.sample ',, elem).children().map( (i, elem) ->
+                   $(elem).text()
+            ).join(' ')
             out.push(util.format('\t%s', text))
-
-    explanations = (i, elem) ->
-        text = $(elem).children('.type').text()
-        out.push(clc.yellow(text))
-        $('.exp-item',,elem).each(expitem)
-
-    $('li[class=type-item]', '.explanations').each(explanations)
 
     labal = $('h3', '.synonym.grammar').text()
 
@@ -59,21 +59,19 @@ main = ->
     word = process.argv[2]
     url = util.format(url_template, word)
 
-    httpget = http.get(url, (res) ->
+    httpget = http.get(url, !(res)->
         res.setEncoding('utf8')
-
-        res.on('data', (chunk) ->
+        do
+            (chunk) <-! res .on 'data'
             htmlpage += chunk
-        )
-
-        res.on('end', ->
+        do
+            <-! res .on 'end'
             out = parser(htmlpage)
             console.log(out.join('\n'))
-        )
-
-    ).on('error', (e) ->
-        console.log("get error:" + e.message)
     )
+    do
+        (e)<-! httpget .on 'error'
+        console.log("get error:" + e.message)
 
 
 if require.main === module
