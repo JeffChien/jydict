@@ -18,7 +18,7 @@ parser = (html) ->
         return out
 
     word = $('a', '.summary').first().text()
-    query = $('dl', '.pronun').text().trim()
+    query = $('dl', '.pronun').first().text().trim()
     pronun = [i.trim() for i in query.split('\n')].join(' ')
 
     explanation = $('p[class=explanation]').first().text()
@@ -33,11 +33,13 @@ parser = (html) ->
 
         (i, elem) <-! $('.exp-item',,elem).each
         text = $('p.exp',,elem).text()
-        out.push(clc.bgBlue('\t' + text))
-        query = $('p.sample',, elem).text().trim()
+        out.push(clc.bgBlue('\n\t' + text))
+
+        (i, elem) <-! $('p.sample',, elem).each
+        query = $(elem).text().trim()
         if query.length > 0
             sample = [i.trim() for i in query.split('\n')].join(' ')
-            out.push(util.format('\t%s\n', sample))
+            out.push(util.format('\t%s', sample))
 
     synonym_label = $('h3', '.synonym.grammar').text().trim()
     if synonym_label.length > 0
