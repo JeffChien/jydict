@@ -12,6 +12,11 @@ url_template = 'http://tw.dictionary.yahoo.com/dictionary?p=%s'
 parser = (html) ->
     out = new Array()
     $ = cheerio.load(html)
+    no_result = $('p', '.msg.no-result').text()
+    if no_result.length > 0
+        out.push(clc.red.bold(no_result))
+        return out
+
     word = $('a', '.summary').first().text()
     pronunkk = $('dd', '.pronun').first().text()
     pronundj = $('dd', '.pronun').last().text()
