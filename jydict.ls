@@ -18,40 +18,36 @@ parser = (html) ->
         return out
 
     word = $('a', '.summary').first().text()
-    pronunkk = $('dd', '.pronun').first().text()
-    pronundj = $('dd', '.pronun').last().text()
+    query = $('dl', '.pronun').text().trim()
+    pronun = [i.trim() for i in query.split('\n')].join(' ')
+
     explanation = $('p[class=explanation]').first().text()
     out.push(clc.red.bold(word))
-    out.push(util.format('KK:%s DJ%s', pronunkk, pronundj))
-    out.push(clc.green(explanation))
+    out.push(pronun)
+    out.push(clc.greenBright(explanation))
 
     do
         (i, elem) <-! $('li[class=type-item]', '.explanations').each
-        text = $('.exp',,elem).text()
-        out.push(util.format('\t%s', text))
+        text = $('.type',,elem).text()
+        out.push(clc.yellow(text))
 
         (i, elem) <-! $('.exp-item',,elem).each
-        text = $('.exp',,elem).text()
-        out.push(util.format('\t%s', text))
-        if $('.sample ',, elem).children().length > 0
-            text = $('.sample ',, elem).children().map( (i, elem) ->
-                   $(elem).text()
-            ).join(' ')
-            out.push(util.format('\t%s', text))
+        text = $('p.exp',,elem).text()
+        out.push(clc.bgBlue('\t' + text))
+        query = $('p.sample',, elem).text().trim()
+        if query.length > 0
+            sample = [i.trim() for i in query.split('\n')].join(' ')
+            out.push(util.format('\t%s\n', sample))
 
-    labal = $('h3', '.synonym.grammar').text()
-
-    synonym = $('a', '.synonym.grammar').map( (i, elem) ->
-        $(elem).text()
-    ).join(', ')
-    out.push(clc.yellow(labal) + ': ' + synonym)
+    synonym_label = $('h3', '.synonym.grammar').text().trim()
+    if synonym_label.length > 0
+        synonym = $('p', '.synonym.grammar').text()
+        out.push(clc.yellow(synonym_label) + ': ' + synonym)
 
     $('div.forms.grammar').each( (i, elem) ->
-        labal = $('h3',,elem).text()
-        text = $('a', '.forms.grammar', elem).map( (i, elem) ->
-            $(elem).text()
-        ).join(', ')
-        out.push(clc.yellow(labal) + ': ' + text)
+        forms_label = $('h3',,elem).text().trim()
+        forms = $('p', '.forms.grammar', elem).text()
+        out.push(clc.yellow(forms_label) + ': ' + forms)
     )
     return out
 
