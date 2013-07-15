@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "cheerio": "",
-        "cli-color": ""
+        "cli-color": "",
+        "argparse": "https://github.com/nodeca/argparse/tarball/master"
     }
 }
