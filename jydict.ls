@@ -3,11 +3,13 @@ require! {
     cheerio
     http
     util
+    argparse
+    readline
     clc: 'cli-color'
 }
 
-
 url_template = 'http://tw.dictionary.yahoo.com/dictionary?p=%s'
+
 
 parser = (html) ->
     out = new Array()
@@ -54,13 +56,29 @@ parser = (html) ->
     return out
 
 
-main = ->
-    htmlpage = ''
-    if process.argv.length == 2
-        return
+parse_cmdline = ->
+    root = new argparse.ArgumentParser(
+        {
+            description: "
+                query vocabulary or phrase from yahoo dictionary, 
+                left argument will enter the interactive mode
+            ",
+        }
+    )
+    root.addArgument(
+        ['words'],
+        {
+            help: 'words for query',
+            nargs: '?',
+            default: void,
+        }
+    )
+    return root.parseArgs()
 
-    word = process.argv[2]
-    url = util.format(url_template, word)
+
+queryWords = !(words, notify) ->
+    htmlpage = ''
+    url = util.format(url_template, words)
 
     httpget = http.get(url, !(res)->
         res.setEncoding('utf8')
@@ -71,10 +89,43 @@ main = ->
             <-! res .on 'end'
             out = parser(htmlpage)
             console.log(out.join('\n'))
+            if notify != void
+                notify()
     )
     do
         (e)<-! httpget .on 'error'
         console.log("get error:" + e.message)
+
+
+interactiveMode = !->
+    rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    })
+    prefix = 'Enter word or phrase: '
+    do
+        (line) <-! rl.on 'line'
+        words = line.trim()
+        if words.length > 0
+            queryWords(line.trim(), !->
+                rl.prompt()
+            )
+        else
+            rl.prompt()
+    do
+        <-! rl.on 'close'
+        process.exit(0)
+
+    rl.setPrompt(prefix, prefix.length)
+    rl.prompt()
+
+
+main = !->
+    args = parse_cmdline()
+    if process.argv.length == 2
+        interactiveMode()
+    else
+        queryWords(args['words'], void)
 
 
 if require.main === module
