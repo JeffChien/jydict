@@ -19,16 +19,29 @@ parser = (html) ->
         out.push(clc.red.bold(no_result))
         return out
 
-    word = $('a', '.summary').first().text()
-    query = $('dl', '.pronun').first().text().trim()
-    pronun = [i.trim() for i in query.split('\n')].join(' ')
+    do #short meaning
+        (i, elem) <-! $('div.summary').each
+        word = $('h2',, elem).text()
+        query = $('dl', '.pronun', elem).text().trim()
+        pronun = [i.trim() for i in query.split('\n')].join(' ')
+        explanation = $('p[class=explanation]',, elem).text()
 
-    explanation = $('p[class=explanation]').first().text()
-    out.push(clc.red.bold(word))
-    out.push(pronun)
-    out.push(clc.greenBright(explanation))
+        out.push(clc.red.bold(word))
+        out.push(pronun)
+        out.push('\t' + clc.greenBright(explanation))
 
-    do
+        synonym_label = $('h3', '.synonym.grammar', elem).text().trim()
+        if synonym_label.length > 0
+            synonym = $('p', '.synonym.grammar', elem).text()
+            out.push('\t' + clc.yellow(synonym_label) + ': ' + synonym)
+
+        $('div.forms.grammar',, elem).each( (i, elem) ->
+            forms_label = $('h3',,elem).text().trim()
+            forms = $('p', '.forms.grammar', elem).text()
+            out.push('\t' + clc.yellow(forms_label) + ': ' + forms)
+        )
+
+    do #samples
         (i, elem) <-! $('li[class=type-item]', '.explanations').each
         text = $('.type',,elem).text()
         out.push(clc.yellow(text))
@@ -42,17 +55,6 @@ parser = (html) ->
         if query.length > 0
             sample = [i.trim() for i in query.split('\n')].join(' ')
             out.push(util.format('\t%s', sample))
-
-    synonym_label = $('h3', '.synonym.grammar').text().trim()
-    if synonym_label.length > 0
-        synonym = $('p', '.synonym.grammar').text()
-        out.push(clc.yellow(synonym_label) + ': ' + synonym)
-
-    $('div.forms.grammar').each( (i, elem) ->
-        forms_label = $('h3',,elem).text().trim()
-        forms = $('p', '.forms.grammar', elem).text()
-        out.push(clc.yellow(forms_label) + ': ' + forms)
-    )
     return out
 
 
