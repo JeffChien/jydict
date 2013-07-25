@@ -8,8 +8,8 @@ require! {
     clc: 'cli-color'
 }
 
-url_template = 'http://tw.dictionary.yahoo.com/dictionary?p=%s'
-
+refer_url = 'tw.dictionary.yahoo.com'
+path_template = '/dictionary?p=%s'
 
 parser = (html) ->
     out = new Array()
@@ -80,9 +80,17 @@ parse_cmdline = ->
 
 queryWords = !(words, notify) ->
     htmlpage = ''
-    url = util.format(url_template, words)
+    p=util.format(path_template, words)
 
-    httpget = http.get(url, !(res)->
+    options = {
+        host: refer_url,
+        path: p,
+        headers: {
+            'Referer': refer_url
+        }
+    }
+
+    httpget = http.get(options, !(res)->
         res.setEncoding('utf8')
         do
             (chunk) <-! res .on 'data'
