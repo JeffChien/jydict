@@ -8,7 +8,8 @@ require! {
     clc: 'cli-color'
 }
 
-refer_url = 'tw.dictionary.yahoo.com'
+host_url = 'tw.dictionary.yahoo.com'
+refer_url = 'http://tw.dictionary.yahoo.com'
 path_template = '/dictionary?p=%s'
 
 parser = (html) ->
@@ -83,7 +84,7 @@ queryWords = !(words, notify) ->
     p=util.format(path_template, words)
 
     options = {
-        host: refer_url,
+        host: host_url,
         path: p,
         headers: {
             'Referer': refer_url
