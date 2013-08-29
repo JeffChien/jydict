@@ -81,7 +81,7 @@ parse_cmdline = ->
 
 queryWords = !(words, notify) ->
     htmlpage = ''
-    p=util.format(path_template, words)
+    p=util.format(path_template, words.replace(/ /g, "+"))
 
     options = {
         host: host_url,
@@ -116,9 +116,9 @@ interactiveMode = !->
     prefix = 'Enter word or phrase: '
     do
         (line) <-! rl.on 'line'
-        words = line.trim()
+        words = line.trim().replace(/ /g, '+')
         if words.length > 0
-            queryWords(line.trim(), !->
+            queryWords(words, !->
                 rl.prompt()
             )
         else
