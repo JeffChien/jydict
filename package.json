@@ -2,7 +2,7 @@
   "author": "Jeff Chien <jeffchien13@gmail.com>",
   "name": "jydict",
   "description": "ydict nodejs implementation",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "engine": "node",
   "preferGlobal": "true",
   "bin": {
@@ -11,7 +11,9 @@
   "dependencies": {
     "cheerio": "",
     "cli-color": "",
-    "argparse": "https://github.com/nodeca/argparse/tarball/master"
+    "argparse": "https://github.com/nodeca/argparse/tarball/master",
+    "speaker": "0.0.10",
+    "lame": "~1.0.3"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

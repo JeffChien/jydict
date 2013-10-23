@@ -12,3 +12,6 @@ rely on [LiveScript](http://livescript.net/)
 - `jydict <word or phrase>`
 - `jydict` enter interactive mode, exit with `ctrl-c` or `ctrl-d`
 - `jydict -h` display help
+
+# update
+v0.1.5: add audio playback

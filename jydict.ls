@@ -5,6 +5,8 @@ require! {
     util
     argparse
     readline
+    lame
+    speaker
     clc: 'cli-color'
 }
 
@@ -19,6 +21,13 @@ parser = (html) ->
     if no_result.length > 0
         out.push(clc.red.bold(no_result))
         return out
+
+    do #audio
+        audiolink = $('div cite.audio').first().attr('sound')
+        if audiolink.length > 0
+            http.get(audiolink, (res) ->
+                res.pipe(new lame.Decoder()).pipe(new speaker())
+            )
 
     do #short meaning
         (i, elem) <-! $('div.summary').each
@@ -49,7 +58,7 @@ parser = (html) ->
 
         (i, elem) <-! $('.exp-item',,elem).each
         text = $('p.exp',,elem).text()
-        out.push(clc.bgBlue('\n\t' + text))
+        out.push('\n\t' + clc.bgBlue(text))
 
         (i, elem) <-! $('p.sample',, elem).each
         query = $(elem).text().trim()
@@ -63,7 +72,7 @@ parse_cmdline = ->
     root = new argparse.ArgumentParser(
         {
             description: "
-                query vocabulary or phrase from yahoo dictionary, 
+                query vocabulary or phrase from yahoo dictionary,
                 left argument will enter the interactive mode
             ",
         }
