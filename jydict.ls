@@ -5,6 +5,8 @@ require! {
     util
     argparse
     readline
+    lame
+    speaker
     clc: 'cli-color'
 }
 
@@ -19,6 +21,13 @@ parser = (html) ->
     if no_result.length > 0
         out.push(clc.red.bold(no_result))
         return out
+
+    do #audio
+        audiolink = $('div cite.audio').first().attr('sound')
+        if audiolink.length > 0
+            http.get(audiolink, (res) ->
+                res.pipe(new lame.Decoder()).pipe(new speaker())
+            )
 
     do #short meaning
         (i, elem) <-! $('div.summary').each

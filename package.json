@@ -11,7 +11,9 @@
   "dependencies": {
     "cheerio": "",
     "cli-color": "",
-    "argparse": "https://github.com/nodeca/argparse/tarball/master"
+    "argparse": "https://github.com/nodeca/argparse/tarball/master",
+    "speaker": "0.0.10",
+    "lame": "~1.0.3"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
