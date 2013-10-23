@@ -2,7 +2,7 @@
   "author": "Jeff Chien <jeffchien13@gmail.com>",
   "name": "jydict",
   "description": "ydict nodejs implementation",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "engine": "node",
   "preferGlobal": "true",
   "bin": {
