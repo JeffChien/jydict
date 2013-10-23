@@ -49,7 +49,7 @@ parser = (html) ->
 
         (i, elem) <-! $('.exp-item',,elem).each
         text = $('p.exp',,elem).text()
-        out.push(clc.bgBlue('\n\t' + text))
+        out.push('\n\t' + clc.bgBlue(text))
 
         (i, elem) <-! $('p.sample',, elem).each
         query = $(elem).text().trim()
@@ -63,7 +63,7 @@ parse_cmdline = ->
     root = new argparse.ArgumentParser(
         {
             description: "
-                query vocabulary or phrase from yahoo dictionary, 
+                query vocabulary or phrase from yahoo dictionary,
                 left argument will enter the interactive mode
             ",
         }
