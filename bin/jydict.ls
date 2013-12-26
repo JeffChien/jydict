@@ -1,12 +1,27 @@
 #!/usr/bin/env lsc
+doc = '''
+Usage: jydict [-h | --help] [<words>]
+
+query vocabulary or phrase from yahoo dictionary,
+enter interactive mode with no arguments.
+
+Positional arguments:
+  words       words for query
+
+Optional arguments:
+  -h, --help  Show this help message and exit.
+'''
+
 require! {
-    cheerio
+    fs
+    path
     http
     util
-    argparse
     readline
+    cheerio
     lame
     speaker
+    docopt
     clc: 'cli-color'
 }
 
@@ -24,7 +39,7 @@ parser = (html) ->
 
     do #audio
         audiolink = $('div cite.audio').first().attr('sound')
-        if audiolink.length > 0
+        if audiolink and audiolink.length > 0
             http.get(audiolink, (res) ->
                 res.pipe(new lame.Decoder()).pipe(new speaker())
             )
@@ -66,27 +81,6 @@ parser = (html) ->
             sample = [i.trim() for i in query.split('\n')].join(' ')
             out.push(util.format('\t%s', sample))
     return out
-
-
-parse_cmdline = ->
-    root = new argparse.ArgumentParser(
-        {
-            description: "
-                query vocabulary or phrase from yahoo dictionary,
-                left argument will enter the interactive mode
-            ",
-        }
-    )
-    root.addArgument(
-        ['words'],
-        {
-            help: 'words for query',
-            nargs: '?',
-            default: void,
-        }
-    )
-    return root.parseArgs()
-
 
 queryWords = !(words, notify) ->
     htmlpage = ''
@@ -140,13 +134,11 @@ interactiveMode = !->
     rl.prompt()
 
 
-main = !->
-    args = parse_cmdline()
-    if process.argv.length == 2
-        interactiveMode()
+main = (args) ->
+    if args['<words>']
+        queryWords(args['<words>'], void)
     else
-        queryWords(args['words'], void)
-
+        interactiveMode()
 
 if require.main === module
-    main()
+    main(docopt.docopt(doc))
