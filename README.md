@@ -1,12 +1,9 @@
 # Jydict
 
-a nodejs implementation of [ydict](https://github.com/freehaha/ydict)
+A command line tool for query vocabulary from yahoo dictionary.
 
 # Installation
-rely on [LiveScript](http://livescript.net/)
-- `[sudo] npm install -g LiveScript`
-- `[sudo] npm install`
-- `[sudo] npm link`
+- `[sudo] npm install -g`
 
 # basic usage
 - `jydict <word or phrase>`
@@ -14,4 +11,5 @@ rely on [LiveScript](http://livescript.net/)
 - `jydict -h` display help
 
 # update
+v0.1.6: fix audio truncate, and module dependency change.
 v0.1.5: add audio playback
