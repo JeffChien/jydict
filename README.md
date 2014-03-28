@@ -11,5 +11,8 @@ A command line tool for query vocabulary from yahoo dictionary.
 - `jydict -h` display help
 
 # update
+v0.1.7: request url protocol change.
+
 v0.1.6: fix audio truncate, and module dependency change.
-v0.1.5: add audio playback
+
+v0.1.5: add audio playback.

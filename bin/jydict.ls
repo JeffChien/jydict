@@ -15,7 +15,7 @@ Optional arguments:
 require! {
     fs
     path
-    http
+    https
     util
     readline
     cheerio
@@ -26,7 +26,7 @@ require! {
 }
 
 host_url = 'tw.dictionary.yahoo.com'
-refer_url = 'http://tw.dictionary.yahoo.com'
+refer_url = 'https://tw.dictionary.yahoo.com'
 path_template = '/dictionary?p=%s'
 
 parser = (html) ->
@@ -38,9 +38,9 @@ parser = (html) ->
         return out
 
     do #audio
-        audiolink = $('div cite.audio').first().attr('sound')
+        audiolink = $('audio source[type="audio/mpeg"]').first().attr('src')
         if audiolink and audiolink.length > 0
-            http.get(audiolink, (res) ->
+            https.get(audiolink, (res) ->
                 res.pipe(new lame.Decoder()).pipe(new speaker())
             )
 
@@ -94,7 +94,7 @@ queryWords = !(words, notify) ->
         }
     }
 
-    httpget = http.get(options, !(res)->
+    httpget = https.get(options, !(res)->
         res.setEncoding('utf8')
         do
             (chunk) <-! res .on 'data'
