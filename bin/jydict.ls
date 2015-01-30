@@ -19,10 +19,8 @@ require! {
     util
     readline
     cheerio
-    lame
-    speaker
     docopt
-    clc: 'cli-color'
+    'cli-color': clc
 }
 
 host_url = 'tw.dictionary.yahoo.com'
@@ -36,13 +34,6 @@ parser = (html) ->
     if no_result.length > 0
         out.push(clc.red.bold(no_result))
         return out
-
-    do #audio
-        audiolink = $('audio source[type="audio/mpeg"]').first().attr('src')
-        if audiolink and audiolink.length > 0
-            https.get(audiolink, (res) ->
-                res.pipe(new lame.Decoder()).pipe(new speaker())
-            )
 
     do #short meaning
         (i, elem) <-! $('div.summary').each
