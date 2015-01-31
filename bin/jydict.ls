@@ -21,19 +21,25 @@ require! {
     cheerio
     docopt
     'cli-color': clc
+    'bluebird': promise
 }
 
 host_url = 'tw.dictionary.yahoo.com'
 refer_url = 'https://tw.dictionary.yahoo.com'
 path_template = '/dictionary?p=%s'
 
-parser = (html) ->
+NoResultError = (message) !->
+    this.name = 'NoResultError'
+    this.message = (message || '')
+
+util.inherits(NoResultError, Error)
+
+parse = (html) ->
     out = new Array()
     $ = cheerio.load(html)
     no_result = $('p', '.msg.no-result').text()
     if no_result.length > 0
-        out.push(clc.red.bold(no_result))
-        return out
+        return promise.reject(new NoResultError(no_result))
 
     do #short meaning
         (i, elem) <-! $('div.summary').each
@@ -71,45 +77,45 @@ parser = (html) ->
         if query.length > 0
             sample = [i.trim() for i in query.split('\n')].join(' ')
             out.push(util.format('\t%s', sample))
-    return out
+    return promise.resolve(out)
 
 queryWords = !(words, notify) ->
-    htmlpage = ''
-    p=util.format(path_template, words.replace(/ /g, "+"))
+    options =
+        host: host_url
+        path: util.format(path_template, words.replace(/ /g, "+"))
+        headers:
+            Referer: refer_url
 
-    options = {
-        host: host_url,
-        path: p,
-        headers: {
-            'Referer': refer_url
-        }
-    }
+    getRequest = promise.method (option) ->
+        return new promise (resolve, reject) !->
+            html = ''
+            req = https.get option, (res) !->
+                res.on 'data', (chunk) !-> html += chunk
+                res.on 'end', !-> resolve(html)
+                res.on 'error', (e) !-> reject(e)
+            req.end!
 
-    httpget = https.get(options, !(res)->
-        res.setEncoding('utf8')
-        do
-            (chunk) <-! res .on 'data'
-            htmlpage += chunk
-        do
-            <-! res .on 'end'
-            out = parser(htmlpage)
-            console.log(out.join('\n'))
+    getRequest(options)
+        .then (html) ->
+            return parse html
+        .then (out) !->
+            console.log out.join('\n')
             if notify != void
-                notify()
-    )
-    do
-        (e)<-! httpget .on 'error'
-        console.log("get error:" + e.message)
-
+                notify!
+        .catch NoResultError, (e) !->
+            console.log clc.red.bold e.message
+        .catch (e) !->
+            console.error 'get error:' + e.message
 
 interactiveMode = !->
-    rl = readline.createInterface({
+    rl = readline.createInterface do
         input: process.stdin,
         output: process.stdout
-    })
+
     prefix = 'Enter word or phrase: '
-    do
-        (line) <-! rl.on 'line'
+    rl.setPrompt(prefix, prefix.length)
+    rl.prompt()
+    rl.on 'line' (line) ->
         words = line.trim().replace(/ /g, '+')
         if words.length > 0
             queryWords(words, !->
@@ -117,12 +123,8 @@ interactiveMode = !->
             )
         else
             rl.prompt()
-    do
-        <-! rl.on 'close'
+    rl.on 'close' !->
         process.exit(0)
-
-    rl.setPrompt(prefix, prefix.length)
-    rl.prompt()
 
 
 main = (args) ->
