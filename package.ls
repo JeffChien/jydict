@@ -3,11 +3,20 @@ author:
     name: ['Chia-Yu Chien']
     email: 'jeffchien13@gmail.com'
 name: 'jydict'
-description: 'ydict for livescript'
+description: 'eng-cht dictionary'
 version: '0.1.7'
 preferGlobal: 'true'
+main: 'lib/index.js'
 bin:
-    jydict: 'bin/jydict.js'
+    jydict: 'bin/jydict'
+scripts:
+    test: """
+        mocha
+    """
+    prepublish: """
+        lsc -cj package.ls &&
+        lsc -bc -o lib src
+    """
 dependencies:
     'cheerio': '^0.18.0'
     'cli-color': '^0.3.2'
