@@ -4,7 +4,7 @@ author:
     email: 'jeffchien13@gmail.com'
 name: 'jydict'
 description: 'eng-cht dictionary'
-version: '0.2.0'
+version: '0.2.1'
 preferGlobal: 'true'
 main: 'lib/index.js'
 bin:
