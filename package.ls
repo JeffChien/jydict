@@ -24,10 +24,9 @@ dependencies:
     'bluebird': '^2.9.4'
 devDependencies:
     'LiveScript': '^1.3.1'
-    'grunt': '^0.4.5'
-    'grunt-cli': '^0.1.13'
-    'grunt-contrib-watch': '^0.6.1'
-    'grunt-livescript': '^0.5.3'
+    "gulp": "^3.8.10"
+    "gulp-util": "^3.0.2"
+    "gulp-livescript": "^2.3.0"
     'mocha': '^2.1.0'
     'chai': '^1.10.0'
 repository:
